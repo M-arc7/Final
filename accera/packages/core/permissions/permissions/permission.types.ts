@@ -1,8 +1,13 @@
-import type { Brand, EntityStatus, Metadata, Timestamped } from '../../shared/primitives';
-
-/** Type contracts only; runtime validation belongs in permission.schema.ts. */
-export type PermissionId = Brand<string, 'PermissionId'>;
-export type PermissionStatus = EntityStatus;
-export type Permission = Readonly<{ id: PermissionId; status: PermissionStatus; metadata: Metadata } & Timestamped>;
-export type CreatePermissionInput = Readonly<{ id?: PermissionId; metadata?: Metadata }>;
-export type UpdatePermissionInput = Readonly<{ metadata?: Metadata }>;
+import type { Brand, Timestamped } from "../../shared/primitives";
+export type PermissionId = Brand<string, "PermissionId">;
+export type PermissionCode = string & {
+  readonly __permissionCode: unique symbol;
+};
+export type Permission = Readonly<
+  {
+    id: PermissionId;
+    code: PermissionCode;
+    description: string;
+    status: "active" | "inactive";
+  } & Timestamped
+>;

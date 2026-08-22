@@ -1,8 +1,44 @@
-import { invariant } from '../../shared/errors';
-import { canTransitionStatus } from '../../shared/rules';
-import { newId } from '../../shared/primitives';
-import type { CreateDeviceInput, Device, DeviceStatus } from './device.types';
+import { newId } from "../../shared/primitives";
+import type { Device, DeviceRegisterInput } from "./device.types";
 
-/** Pure device representation and invariants; no database or provider access. */
-export const createDevice = (input: CreateDeviceInput, now = new Date()): Device => ({ id: input.id ?? newId<'DeviceId'>(), status: 'active', metadata: input.metadata ?? {}, createdAt: now, updatedAt: now });
-export const transitionDeviceStatus = (record: Device, status: DeviceStatus, now = new Date()): Device => { invariant(canTransitionStatus(record.status, status), 'device.invalid_status_transition', 'The requested lifecycle transition is not allowed.', { from: record.status, to: status }); return { ...record, status, updatedAt: now }; };
+/** Device facts are intentionally limited to user-provided application metadata. */
+export const registerDevice = (
+  input: DeviceRegisterInput,
+  now = new Date(),
+): Device => ({
+  id: newId<"DeviceId">(),
+  accountId: input.accountId,
+  type: input.type,
+  platform: input.platform,
+  name: input.name,
+  osVersion: input.osVersion,
+  appVersion: input.appVersion,
+  pushToken: input.pushToken,
+  trust: "untrusted",
+  status: "active",
+  lastSeenAt: now,
+  metadata: input.metadata ?? {},
+  createdAt: now,
+  updatedAt: now,
+});
+export const markDeviceSeen = (device: Device, now = new Date()): Device => ({
+  ...device,
+  lastSeenAt: now,
+  updatedAt: now,
+});
+export const setDeviceTrust = (
+  device: Device,
+  trusted: boolean,
+  now = new Date(),
+): Device => ({
+  ...device,
+  trust: trusted ? "trusted" : "untrusted",
+  updatedAt: now,
+});
+export const revokeDevice = (device: Device, now = new Date()): Device => ({
+  ...device,
+  status: "revoked",
+  trust: "revoked",
+  pushToken: undefined,
+  updatedAt: now,
+});

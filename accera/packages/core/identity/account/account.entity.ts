@@ -1,8 +1,39 @@
-import { invariant } from '../../shared/errors';
-import { canTransitionStatus } from '../../shared/rules';
-import { newId } from '../../shared/primitives';
-import type { CreateAccountInput, Account, AccountStatus } from './account.types';
-
-/** Pure account representation and invariants; no database or provider access. */
-export const createAccount = (input: CreateAccountInput, now = new Date()): Account => ({ id: input.id ?? newId<'AccountId'>(), status: 'active', metadata: input.metadata ?? {}, createdAt: now, updatedAt: now });
-export const transitionAccountStatus = (record: Account, status: AccountStatus, now = new Date()): Account => { invariant(canTransitionStatus(record.status, status), 'account.invalid_status_transition', 'The requested lifecycle transition is not allowed.', { from: record.status, to: status }); return { ...record, status, updatedAt: now }; };
+import { invariant } from "../../shared/errors";
+import { newId } from "../../shared/primitives";
+import type {
+  Account,
+  AccountCreateInput,
+  AccountStatus,
+} from "./account.types";
+const transitions: Readonly<Record<AccountStatus, readonly AccountStatus[]>> = {
+  pending: ["active", "deactivated"],
+  active: ["suspended", "locked", "deactivated"],
+  suspended: ["active", "deactivated"],
+  locked: ["active", "deactivated"],
+  deactivated: [],
+};
+/** Pure one-account identity model. Roles and organisation membership are not account fields. */
+export const createAccount = (
+  input: AccountCreateInput,
+  now = new Date(),
+): Account => ({
+  id: input.id ?? newId<"AccountId">(),
+  identity: input.identity,
+  status: "pending",
+  metadata: input.metadata ?? {},
+  createdAt: now,
+  updatedAt: now,
+});
+export const transitionAccountStatus = (
+  account: Account,
+  next: AccountStatus,
+  now = new Date(),
+): Account => {
+  invariant(
+    transitions[account.status].includes(next),
+    "account.invalid_status_transition",
+    "The requested account lifecycle transition is not allowed.",
+    { from: account.status, to: next },
+  );
+  return { ...account, status: next, updatedAt: now };
+};

@@ -1,12 +1,43 @@
-import { CoreError } from '../../shared/errors';
-import { createDevice, transitionDeviceStatus } from './device.entity';
-import type { DeviceRepository } from './device.repository';
-import type { CreateDeviceInput, Device, DeviceId, DeviceStatus } from './device.types';
+import {
+  markDeviceSeen,
+  registerDevice,
+  revokeDevice,
+  setDeviceTrust,
+} from "./device.entity";
+import type { DeviceRepository } from "./device.repository";
+import type { Device, DeviceId, DeviceRegisterInput } from "./device.types";
 
-/** Use-case orchestration only. UI, HTTP and provider SDK concerns are forbidden here. */
 export class DeviceService {
-  constructor(private readonly repository: DeviceRepository, private readonly now: () => Date = () => new Date()) {}
-  async get(id: DeviceId): Promise<Device | null> { return this.repository.findById(id); }
-  async create(input: CreateDeviceInput): Promise<Device> { return this.repository.insert(createDevice(input, this.now())); }
-  async changeStatus(id: DeviceId, status: DeviceStatus): Promise<Device> { const record = await this.repository.findById(id); if (!record) throw new CoreError('device.not_found', 'The requested record does not exist.', { id }); return this.repository.replace(transitionDeviceStatus(record, status, this.now())); }
+  constructor(
+    private readonly repository: DeviceRepository,
+    private readonly now: () => Date = () => new Date(),
+  ) {}
+  async register(input: DeviceRegisterInput): Promise<Device> {
+    return this.repository.create(registerDevice(input, this.now()));
+  }
+  async revoke(id: DeviceId): Promise<void> {
+    const device = await this.repository.findById(id);
+    if (device) await this.repository.update(revokeDevice(device, this.now()));
+  }
+  async setTrusted(id: DeviceId, trusted: boolean): Promise<Device | null> {
+    const device = await this.repository.findById(id);
+    return device && device.status === "active"
+      ? this.repository.update(setDeviceTrust(device, trusted, this.now()))
+      : null;
+  }
+  async markSeen(id: DeviceId): Promise<Device | null> {
+    const device = await this.repository.findById(id);
+    return device && device.status === "active"
+      ? this.repository.update(markDeviceSeen(device, this.now()))
+      : null;
+  }
+  async updatePushToken(
+    id: DeviceId,
+    pushToken?: string,
+  ): Promise<Device | null> {
+    const device = await this.repository.findById(id);
+    return device && device.status === "active"
+      ? this.repository.update({ ...device, pushToken, updatedAt: this.now() })
+      : null;
+  }
 }

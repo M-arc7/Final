@@ -11,13 +11,16 @@ Migrations are intentionally ordered and forward-only:
 
 ```text
 extensions → core → organisations → sports → facilities → academy → competition
-→ finance → commerce → sponsorship → performance → content → intelligence → RLS → indexes
+→ finance → commerce → sponsorship → performance → content → intelligence → RLS foundation
+→ indexes → domain RLS modules
 ```
 
 Do not rename, edit after production application, or reorder an existing migration.
 Add a new numbered migration for every schema evolution. `00014_rls.sql` establishes
-the database tenant boundary; Edge Functions add operation-level permission and
-validation checks but never replace RLS.
+the security predicates and default-deny boundary; the numbered `*_rls_*.sql`
+migrations apply domain policies. The pre-existing indexes migration remains in its
+original position to preserve forward-only history. New domains add their RLS policy
+before their indexes. Edge Functions add operation-level validation but never replace RLS.
 
 ## Edge Functions
 

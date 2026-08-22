@@ -1,8 +1,20 @@
-import type { Brand, EntityStatus, Metadata, Timestamped } from '../../shared/primitives';
-
-/** Type contracts only; runtime validation belongs in role-definition.schema.ts. */
-export type RoleDefinitionId = Brand<string, 'RoleDefinitionId'>;
-export type RoleDefinitionStatus = EntityStatus;
-export type RoleDefinition = Readonly<{ id: RoleDefinitionId; status: RoleDefinitionStatus; metadata: Metadata } & Timestamped>;
-export type CreateRoleDefinitionInput = Readonly<{ id?: RoleDefinitionId; metadata?: Metadata }>;
-export type UpdateRoleDefinitionInput = Readonly<{ metadata?: Metadata }>;
+import type { Brand, Timestamped } from "../../shared/primitives";
+export type RoleDefinitionId = Brand<string, "RoleDefinitionId">;
+export type RoleScope =
+  | "platform"
+  | "organisation"
+  | "facility"
+  | "academy"
+  | "competition";
+export type RoleDefinition = Readonly<
+  {
+    id: RoleDefinitionId;
+    code: string;
+    name: string;
+    scope: RoleScope;
+    description?: string;
+    permissionCodes: readonly string[];
+    version: number;
+    status: "active" | "inactive";
+  } & Timestamped
+>;

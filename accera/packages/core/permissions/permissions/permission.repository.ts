@@ -1,5 +1,5 @@
-import type { Repository } from '../../shared/repository';
-import type { Permission, PermissionId } from './permission.types';
-
-/** Persistence port only. Database queries and adapter details live outside core. */
-export interface PermissionRepository extends Repository<PermissionId, Permission> {}
+import type { Permission } from "./permission.types";
+export interface PermissionRepository {
+  findByCode(code: string): Promise<Permission | null>;
+  save(permission: Permission): Promise<Permission>;
+}

@@ -8,6 +8,10 @@ Immutable/security-sensitive audit records and required operations.
 
 Capture who, tenant, action, target, before/after summary, time, correlation ID and origin; prevent ordinary users from altering records.
 
+Audit rows are append-only to clients. RLS allows read access only to platform
+administrators or the relevant scoped `audit.read` permission; trusted services append
+records as part of security-sensitive workflows.
+
 ## Implementation contract
 
 - Name the accountable domain or operational owner before adding a new capability.

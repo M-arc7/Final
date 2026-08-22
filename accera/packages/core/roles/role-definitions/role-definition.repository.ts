@@ -1,5 +1,5 @@
-import type { Repository } from '../../shared/repository';
-import type { RoleDefinition, RoleDefinitionId } from './role-definition.types';
-
-/** Persistence port only. Database queries and adapter details live outside core. */
-export interface RoleDefinitionRepository extends Repository<RoleDefinitionId, RoleDefinition> {}
+import type { RoleDefinition } from "./role-definition.types";
+export interface RoleDefinitionRepository {
+  findByCode(code: string): Promise<RoleDefinition | null>;
+  save(definition: RoleDefinition): Promise<RoleDefinition>;
+}

@@ -8,6 +8,9 @@ Identity authentication, verification, recovery and account protection.
 
 Define supported factors, verification assurance, recovery proofing, rate limits and safe account-enumeration behavior.
 
+RLS begins only after Supabase Auth establishes `auth.uid()`. Authentication does
+not grant organisation or resource access; see [RLS](rls.md) for row enforcement.
+
 ## Implementation contract
 
 - Name the accountable domain or operational owner before adding a new capability.

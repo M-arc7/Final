@@ -1,4 +1,4 @@
-# ACCERA Rls
+# ACCERA Row Level Security
 
 > **Status:** Baseline controlled specification. Update this document in the same change as any contract it governs.
 
@@ -7,6 +7,10 @@
 Supabase/PostgreSQL Row Level Security strategy and policies.
 
 RLS is mandatory for tenant tables and tested with representative JWT claims. Service-role bypass is server-only and audited.
+
+This is the primary security reference for database access. The full table-scope,
+predicate, service-role, public-read, relationship, and testing contract is in
+[the database RLS contract](../03-database/row-level-security.md).
 
 ## Implementation contract
 

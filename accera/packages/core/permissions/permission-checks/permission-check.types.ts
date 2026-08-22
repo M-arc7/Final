@@ -1,8 +1,18 @@
-import type { Brand, EntityStatus, Metadata, Timestamped } from '../../shared/primitives';
-
-/** Type contracts only; runtime validation belongs in permission-check.schema.ts. */
-export type PermissionCheckId = Brand<string, 'PermissionCheckId'>;
-export type PermissionCheckStatus = EntityStatus;
-export type PermissionCheck = Readonly<{ id: PermissionCheckId; status: PermissionCheckStatus; metadata: Metadata } & Timestamped>;
-export type CreatePermissionCheckInput = Readonly<{ id?: PermissionCheckId; metadata?: Metadata }>;
-export type UpdatePermissionCheckInput = Readonly<{ metadata?: Metadata }>;
+export type PermissionDecision = Readonly<{
+  allowed: boolean;
+  reason:
+    | "allowed"
+    | "unauthenticated"
+    | "missing_context"
+    | "not_a_member"
+    | "missing_permission"
+    | "policy_denied"
+    | "indeterminate";
+}>;
+export type PermissionCheck = Readonly<{
+  actorAccountId?: string;
+  permission: string;
+  organisationId?: string;
+  resource: Readonly<{ type: string; id?: string; ownerAccountId?: string }>;
+  context?: Readonly<Record<string, unknown>>;
+}>;

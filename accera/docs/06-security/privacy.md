@@ -8,6 +8,10 @@ Privacy principles, visibility, consent, access, export, correction and deletion
 
 Collect the minimum necessary, make sensitive athlete/minor visibility explicit and propagate consent to downstream processing.
 
+Privacy classifications are enforced at the row boundary: private profiles,
+athlete/guardian records, finance, performance, and recommendations require an
+ownership, relationship, or scoped permission policy described in [RLS](rls.md).
+
 ## Implementation contract
 
 - Name the accountable domain or operational owner before adding a new capability.

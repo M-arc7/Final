@@ -1,5 +1,12 @@
-import type { Repository } from '../../shared/repository';
-import type { Verification, VerificationId } from './verification.types';
-
-/** Persistence port only. Database queries and adapter details live outside core. */
-export interface VerificationRepository extends Repository<VerificationId, Verification> {}
+import type { AccountId } from "../account";
+import type { Verification, VerificationId } from "./verification.types";
+export interface VerificationRepository {
+  create(verification: Verification): Promise<Verification>;
+  findById(id: VerificationId): Promise<Verification | null>;
+  update(verification: Verification): Promise<Verification>;
+  completeIfPending(verification: Verification): Promise<Verification | null>;
+  invalidatePending(
+    accountId: AccountId,
+    purpose: Verification["purpose"],
+  ): Promise<void>;
+}

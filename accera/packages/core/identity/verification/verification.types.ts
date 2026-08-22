@@ -1,8 +1,41 @@
-import type { Brand, EntityStatus, Metadata, Timestamped } from '../../shared/primitives';
+import type { AccountId } from "../account";
+import type { Brand, Timestamped } from "../../shared/primitives";
 
-/** Type contracts only; runtime validation belongs in verification.schema.ts. */
-export type VerificationId = Brand<string, 'VerificationId'>;
-export type VerificationStatus = EntityStatus;
-export type Verification = Readonly<{ id: VerificationId; status: VerificationStatus; metadata: Metadata } & Timestamped>;
-export type CreateVerificationInput = Readonly<{ id?: VerificationId; metadata?: Metadata }>;
-export type UpdateVerificationInput = Readonly<{ metadata?: Metadata }>;
+export type VerificationId = Brand<string, "VerificationId">;
+export type VerificationPurpose =
+  | "identity"
+  | "email"
+  | "phone"
+  | "password_reset"
+  | "mfa";
+export type VerificationStatus =
+  | "pending"
+  | "completed"
+  | "expired"
+  | "invalidated";
+export type Verification = Readonly<
+  {
+    id: VerificationId;
+    accountId: AccountId;
+    purpose: VerificationPurpose;
+    channel: string;
+    status: VerificationStatus;
+    tokenHash?: string;
+    attemptCount: number;
+    maxAttempts: number;
+    expiresAt: Date;
+    completedAt?: Date;
+  } & Timestamped
+>;
+export type VerificationCreateInput = Readonly<{
+  accountId: AccountId;
+  purpose: VerificationPurpose;
+  channel: string;
+  expiresAt: Date;
+  maxAttempts?: number;
+}>;
+export type VerificationResult = Readonly<{
+  verified: boolean;
+  status: VerificationStatus;
+  accountId?: AccountId;
+}>;

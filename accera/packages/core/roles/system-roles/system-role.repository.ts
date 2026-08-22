@@ -1,5 +1,5 @@
-import type { Repository } from '../../shared/repository';
-import type { SystemRole, SystemRoleId } from './system-role.types';
-
-/** Persistence port only. Database queries and adapter details live outside core. */
-export interface SystemRoleRepository extends Repository<SystemRoleId, SystemRole> {}
+import type { SystemRole, SystemRoleCode } from "./system-role.types";
+export interface SystemRoleRepository {
+  findByCode(code: SystemRoleCode): Promise<SystemRole | null>;
+  save(role: SystemRole): Promise<SystemRole>;
+}

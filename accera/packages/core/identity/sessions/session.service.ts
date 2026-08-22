@@ -1,12 +1,42 @@
-import { CoreError } from '../../shared/errors';
-import { createSession, transitionSessionStatus } from './session.entity';
-import type { SessionRepository } from './session.repository';
-import type { CreateSessionInput, Session, SessionId, SessionStatus } from './session.types';
+import { CoreError } from "../../shared/errors";
+import {
+  createSession,
+  isUsableSession,
+  refreshSession,
+  revokeSession,
+} from "./session.entity";
+import type { SessionRepository } from "./session.repository";
+import type { Session, SessionCreateInput, SessionId } from "./session.types";
 
-/** Use-case orchestration only. UI, HTTP and provider SDK concerns are forbidden here. */
 export class SessionService {
-  constructor(private readonly repository: SessionRepository, private readonly now: () => Date = () => new Date()) {}
-  async get(id: SessionId): Promise<Session | null> { return this.repository.findById(id); }
-  async create(input: CreateSessionInput): Promise<Session> { return this.repository.insert(createSession(input, this.now())); }
-  async changeStatus(id: SessionId, status: SessionStatus): Promise<Session> { const record = await this.repository.findById(id); if (!record) throw new CoreError('session.not_found', 'The requested record does not exist.', { id }); return this.repository.replace(transitionSessionStatus(record, status, this.now())); }
+  constructor(
+    private readonly repository: SessionRepository,
+    private readonly now: () => Date = () => new Date(),
+  ) {}
+  async create(input: SessionCreateInput): Promise<Session> {
+    return this.repository.create(createSession(input, this.now()));
+  }
+  async get(id: SessionId): Promise<Session | null> {
+    return this.repository.findById(id);
+  }
+  async validate(id: SessionId): Promise<Session> {
+    const session = await this.repository.findById(id);
+    if (!session || !isUsableSession(session, this.now()))
+      throw new CoreError("session.invalid", "The session is not active.", {});
+    return session;
+  }
+  async refresh(id: SessionId, expiresAt: Date): Promise<Session> {
+    const session = await this.validate(id);
+    return this.repository.update(
+      refreshSession(session, expiresAt, this.now()),
+    );
+  }
+  async revoke(id: SessionId): Promise<void> {
+    const session = await this.repository.findById(id);
+    if (session)
+      await this.repository.update(revokeSession(session, this.now()));
+  }
+  async revokeAll(accountId: Session["accountId"]): Promise<void> {
+    await this.repository.revokeAllForAccount(accountId);
+  }
 }

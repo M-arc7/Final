@@ -1,6 +1,16 @@
-import { z } from 'zod';
-
-/** Runtime input validation only; this module has no persistence access. */
-export const role_definitionIdSchema = z.string().uuid();
-export const createRoleDefinitionSchema = z.object({ id: role_definitionIdSchema.optional(), metadata: z.record(z.unknown()).default({}) }).strict();
-export const updateRoleDefinitionSchema = z.object({ metadata: z.record(z.unknown()).optional() }).strict();
+import { z } from "zod";
+export const roleDefinitionSchema = z
+  .object({
+    code: z.string().regex(/^[a-z][a-z0-9_.]*$/),
+    name: z.string().min(1).max(120),
+    scope: z.enum([
+      "platform",
+      "organisation",
+      "facility",
+      "academy",
+      "competition",
+    ]),
+    description: z.string().max(2000).optional(),
+    permissionCodes: z.array(z.string().regex(/^[a-z][a-z0-9_.]*$/)).max(500),
+  })
+  .strict();

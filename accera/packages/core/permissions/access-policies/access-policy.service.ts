@@ -1,12 +1,13 @@
-import { CoreError } from '../../shared/errors';
-import { createAccessPolicy, transitionAccessPolicyStatus } from './access-policy.entity';
-import type { AccessPolicyRepository } from './access-policy.repository';
-import type { CreateAccessPolicyInput, AccessPolicy, AccessPolicyId, AccessPolicyStatus } from './access-policy.types';
-
-/** Use-case orchestration only. UI, HTTP and provider SDK concerns are forbidden here. */
-export class AccessPolicyService {
-  constructor(private readonly repository: AccessPolicyRepository, private readonly now: () => Date = () => new Date()) {}
-  async get(id: AccessPolicyId): Promise<AccessPolicy | null> { return this.repository.findById(id); }
-  async create(input: CreateAccessPolicyInput): Promise<AccessPolicy> { return this.repository.insert(createAccessPolicy(input, this.now())); }
-  async changeStatus(id: AccessPolicyId, status: AccessPolicyStatus): Promise<AccessPolicy> { const record = await this.repository.findById(id); if (!record) throw new CoreError('access-policy.not_found', 'The requested record does not exist.', { id }); return this.repository.replace(transitionAccessPolicyStatus(record, status, this.now())); }
+import type { PermissionCheck } from "../permission-checks";
+import type { AccessPolicyRepository } from "./access-policy.repository";
+/** Contextual policy evaluation. A policy cannot grant access unless role/permission evaluation already succeeded. */ export class AccessPolicyService {
+  constructor(private readonly repository: AccessPolicyRepository) {}
+  async evaluate(request: PermissionCheck): Promise<boolean> {
+    if (!request.actorAccountId || !request.organisationId) return false;
+    const policies = await this.repository.listApplicable(
+      request.permission,
+      request.organisationId,
+    );
+    return policies.every((policy) => policy.enabled);
+  }
 }

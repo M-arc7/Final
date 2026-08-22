@@ -1,6 +1,22 @@
-import { z } from 'zod';
-
-/** Runtime input validation only; this module has no persistence access. */
-export const role_assignmentIdSchema = z.string().uuid();
-export const createRoleAssignmentSchema = z.object({ id: role_assignmentIdSchema.optional(), metadata: z.record(z.unknown()).default({}) }).strict();
-export const updateRoleAssignmentSchema = z.object({ metadata: z.record(z.unknown()).optional() }).strict();
+import { z } from "zod";
+export const roleAssignmentSchema = z
+  .object({
+    accountId: z.string().uuid(),
+    roleDefinitionId: z.string().uuid(),
+    scope: z
+      .object({
+        type: z.enum([
+          "platform",
+          "organisation",
+          "facility",
+          "academy",
+          "competition",
+        ]),
+        organisationId: z.string().uuid().optional(),
+        resourceId: z.string().uuid().optional(),
+      })
+      .strict(),
+    startsAt: z.coerce.date(),
+    endsAt: z.coerce.date().optional(),
+  })
+  .strict();

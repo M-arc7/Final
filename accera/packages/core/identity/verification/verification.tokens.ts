@@ -1,2 +1,9 @@
-/** Token port. Infrastructure supplies cryptography; token values are never persisted in plaintext. */
-export interface VerificationTokenCodec { issue(input: Readonly<{ purpose: string; subjectId: string; expiresAt: Date }>): Promise<Readonly<{ token: string; tokenHash: string }>>; verify(token: string, hash: string, expiresAt: Date): Promise<boolean>; }
+/**
+ * Cryptographic port. Implementations must use a cryptographically secure RNG,
+ * hash tokens before persistence, and compare hashes in constant time. Raw tokens
+ * are returned only for delivery and must never be written to ACCERA records.
+ */
+export interface VerificationTokenCodec {
+  issue(): Promise<Readonly<{ token: string; hash: string }>>;
+  verify(token: string, hash: string): Promise<boolean>;
+}

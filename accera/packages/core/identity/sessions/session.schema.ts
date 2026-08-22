@@ -1,6 +1,13 @@
-import { z } from 'zod';
-
-/** Runtime input validation only; this module has no persistence access. */
+import { z } from "zod";
 export const sessionIdSchema = z.string().uuid();
-export const createSessionSchema = z.object({ id: sessionIdSchema.optional(), metadata: z.record(z.unknown()).default({}) }).strict();
-export const updateSessionSchema = z.object({ metadata: z.record(z.unknown()).optional() }).strict();
+export const createSessionSchema = z
+  .object({
+    accountId: z.string().uuid(),
+    deviceId: z.string().uuid().optional(),
+    expiresAt: z.coerce.date(),
+    ipMetadata: z.record(z.unknown()).optional(),
+  })
+  .strict();
+export const revokeSessionSchema = z
+  .object({ sessionId: sessionIdSchema })
+  .strict();

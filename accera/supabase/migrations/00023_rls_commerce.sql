@@ -1,0 +1,18 @@
+-- =========================================================
+-- COMMERCE: active catalogue data is public; carts and orders are customer-owned.
+-- =========================================================
+
+grant select on public.vendors, public.catalogues, public.products, public.product_variants, public.promotions to anon;
+create policy vendors_public_read on public.vendors for select using (status = 'active');
+create policy catalogues_public_read on public.catalogues for select using (status = 'active');
+create policy products_public_read on public.products for select using (status = 'active');
+create policy variants_public_read on public.product_variants for select using (status = 'active');
+create policy promotions_public_read on public.promotions for select using (status = 'active');
+create policy inventory_vendor_manage_read on public.inventory_items for select using (exists (select 1 from public.product_variants variant join public.products product on product.id = variant.product_id join public.catalogues catalogue on catalogue.id = product.catalogue_id join public.vendors vendor on vendor.id = catalogue.vendor_id where variant.id = variant_id and app.has_organisation_permission(vendor.organisation_id, 'commerce.manage')));
+create policy inventory_vendor_manage_write on public.inventory_items for all using (exists (select 1 from public.product_variants variant join public.products product on product.id = variant.product_id join public.catalogues catalogue on catalogue.id = product.catalogue_id join public.vendors vendor on vendor.id = catalogue.vendor_id where variant.id = variant_id and app.has_organisation_permission(vendor.organisation_id, 'commerce.manage'))) with check (exists (select 1 from public.product_variants variant join public.products product on product.id = variant.product_id join public.catalogues catalogue on catalogue.id = product.catalogue_id join public.vendors vendor on vendor.id = catalogue.vendor_id where variant.id = variant_id and app.has_organisation_permission(vendor.organisation_id, 'commerce.manage')));
+create policy carts_owner on public.carts for all using (app.owns_record(customer_id)) with check (app.owns_record(customer_id));
+create policy cart_items_owner on public.cart_items for all using (exists (select 1 from public.carts cart where cart.id = cart_id and app.owns_record(cart.customer_id))) with check (exists (select 1 from public.carts cart where cart.id = cart_id and app.owns_record(cart.customer_id)));
+create policy orders_customer_or_vendor_read on public.orders for select using (app.owns_record(customer_id) or app.has_organisation_permission(organisation_id, 'commerce.manage'));
+create policy order_items_customer_or_vendor_read on public.order_items for select using (exists (select 1 from public.orders order_record where order_record.id = order_id and (app.owns_record(order_record.customer_id) or app.has_organisation_permission(order_record.organisation_id, 'commerce.manage'))));
+create policy fulfillments_customer_or_vendor_read on public.fulfillments for select using (exists (select 1 from public.orders order_record where order_record.id = order_id and (app.owns_record(order_record.customer_id) or app.has_organisation_permission(order_record.organisation_id, 'commerce.manage'))));
+create policy shipments_customer_or_vendor_read on public.shipments for select using (exists (select 1 from public.fulfillments fulfillment join public.orders order_record on order_record.id = fulfillment.order_id where fulfillment.id = fulfillment_id and (app.owns_record(order_record.customer_id) or app.has_organisation_permission(order_record.organisation_id, 'commerce.manage'))));

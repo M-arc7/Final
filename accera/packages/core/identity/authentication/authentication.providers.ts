@@ -1,3 +1,22 @@
-import type { AuthenticationId } from './authentication.types';
-/** External authentication adapter port. Provider SDKs and credentials stay in infrastructure. */
-export interface AuthenticationProvider { authenticate(input: Readonly<Record<string, unknown>>): Promise<Readonly<{ accountId: AuthenticationId; providerSubject: string; requiresMfa: boolean }>>; revoke?(providerSubject: string): Promise<void>; }
+import type {
+  AuthenticationProvider,
+  SignInInput,
+  SignUpInput,
+} from "./authentication.types";
+/** Provider port only. Provider implementations live in infrastructure and must not return plaintext secrets. */
+export type ProviderIdentity = Readonly<{
+  provider: AuthenticationProvider;
+  providerSubject: string;
+  identifier: string;
+  verified: boolean;
+}>;
+export interface IdentityProvider {
+  readonly name: AuthenticationProvider;
+  signUp(input: SignUpInput): Promise<ProviderIdentity>;
+  signIn(input: SignInInput): Promise<ProviderIdentity>;
+  signOut?(providerSubject: string): Promise<void>;
+  requestPasswordReset?(identifier: string): Promise<void>;
+  resetPassword?(
+    input: Readonly<{ token: string; newSecret: string }>,
+  ): Promise<void>;
+}

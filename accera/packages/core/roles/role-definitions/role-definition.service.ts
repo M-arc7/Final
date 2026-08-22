@@ -1,12 +1,16 @@
-import { CoreError } from '../../shared/errors';
-import { createRoleDefinition, transitionRoleDefinitionStatus } from './role-definition.entity';
-import type { RoleDefinitionRepository } from './role-definition.repository';
-import type { CreateRoleDefinitionInput, RoleDefinition, RoleDefinitionId, RoleDefinitionStatus } from './role-definition.types';
-
-/** Use-case orchestration only. UI, HTTP and provider SDK concerns are forbidden here. */
+import { CoreError } from "../../shared/errors";
+import type { RoleDefinitionRepository } from "./role-definition.repository";
+import type { RoleDefinition } from "./role-definition.types";
 export class RoleDefinitionService {
-  constructor(private readonly repository: RoleDefinitionRepository, private readonly now: () => Date = () => new Date()) {}
-  async get(id: RoleDefinitionId): Promise<RoleDefinition | null> { return this.repository.findById(id); }
-  async create(input: CreateRoleDefinitionInput): Promise<RoleDefinition> { return this.repository.insert(createRoleDefinition(input, this.now())); }
-  async changeStatus(id: RoleDefinitionId, status: RoleDefinitionStatus): Promise<RoleDefinition> { const record = await this.repository.findById(id); if (!record) throw new CoreError('role-definition.not_found', 'The requested record does not exist.', { id }); return this.repository.replace(transitionRoleDefinitionStatus(record, status, this.now())); }
+  constructor(private readonly repository: RoleDefinitionRepository) {}
+  async resolveCapabilities(code: string): Promise<readonly string[]> {
+    const definition = await this.repository.findByCode(code);
+    if (!definition || definition.status !== "active")
+      throw new CoreError(
+        "role_definition.unavailable",
+        "The role definition is not available.",
+        {},
+      );
+    return definition.permissionCodes;
+  }
 }

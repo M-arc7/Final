@@ -1,6 +1,9 @@
-import { z } from 'zod';
-
-/** Runtime input validation only; this module has no persistence access. */
-export const access_policyIdSchema = z.string().uuid();
-export const createAccessPolicySchema = z.object({ id: access_policyIdSchema.optional(), metadata: z.record(z.unknown()).default({}) }).strict();
-export const updateAccessPolicySchema = z.object({ metadata: z.record(z.unknown()).optional() }).strict();
+import { z } from "zod";
+export const accessPolicySchema = z
+  .object({
+    code: z.string().regex(/^[a-z][a-z0-9_.]*$/),
+    description: z.string().min(1).max(1000),
+    organisationId: z.string().uuid().optional(),
+    permission: z.string().regex(/^[a-z][a-z0-9_.]*$/),
+  })
+  .strict();

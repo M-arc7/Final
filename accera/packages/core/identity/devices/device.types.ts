@@ -1,8 +1,34 @@
-import type { Brand, EntityStatus, Metadata, Timestamped } from '../../shared/primitives';
+import type { AccountId } from "../account";
+import type { Brand, Metadata, Timestamped } from "../../shared/primitives";
 
-/** Type contracts only; runtime validation belongs in device.schema.ts. */
-export type DeviceId = Brand<string, 'DeviceId'>;
-export type DeviceStatus = EntityStatus;
-export type Device = Readonly<{ id: DeviceId; status: DeviceStatus; metadata: Metadata } & Timestamped>;
-export type CreateDeviceInput = Readonly<{ id?: DeviceId; metadata?: Metadata }>;
-export type UpdateDeviceInput = Readonly<{ metadata?: Metadata }>;
+export type DeviceId = Brand<string, "DeviceId">;
+export type DeviceType = "mobile" | "desktop" | "browser" | "other";
+export type DevicePlatform = "ios" | "android" | "web" | "other";
+export type DeviceStatus = "active" | "revoked";
+export type DeviceTrust = "untrusted" | "trusted" | "revoked";
+export type Device = Readonly<
+  {
+    id: DeviceId;
+    accountId: AccountId;
+    type: DeviceType;
+    platform: DevicePlatform;
+    name?: string;
+    osVersion?: string;
+    appVersion?: string;
+    pushToken?: string;
+    trust: DeviceTrust;
+    status: DeviceStatus;
+    lastSeenAt: Date;
+    metadata: Metadata;
+  } & Timestamped
+>;
+export type DeviceRegisterInput = Readonly<{
+  accountId: AccountId;
+  type: DeviceType;
+  platform: DevicePlatform;
+  name?: string;
+  osVersion?: string;
+  appVersion?: string;
+  pushToken?: string;
+  metadata?: Metadata;
+}>;

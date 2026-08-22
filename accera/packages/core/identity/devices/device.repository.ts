@@ -1,5 +1,8 @@
-import type { Repository } from '../../shared/repository';
-import type { Device, DeviceId } from './device.types';
-
-/** Persistence port only. Database queries and adapter details live outside core. */
-export interface DeviceRepository extends Repository<DeviceId, Device> {}
+import type { AccountId } from "../account";
+import type { Device, DeviceId } from "./device.types";
+export interface DeviceRepository {
+  create(device: Device): Promise<Device>;
+  findById(id: DeviceId): Promise<Device | null>;
+  update(device: Device): Promise<Device>;
+  listForAccount(accountId: AccountId): Promise<readonly Device[]>;
+}

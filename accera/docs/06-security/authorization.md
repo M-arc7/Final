@@ -8,6 +8,10 @@ Roles, permissions, access boundaries, organisation isolation and privileged ope
 
 Use deny-by-default, permission grants scoped to tenant/resource, separation of duties and audit of privilege change.
 
+Authorisation answers whether an identity has a scoped permission. RLS independently
+answers whether that permission applies to the requested row; UI checks never replace
+the policies in [RLS](rls.md).
+
 ## Implementation contract
 
 - Name the accountable domain or operational owner before adding a new capability.

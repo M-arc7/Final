@@ -1,8 +1,29 @@
-import type { Brand, EntityStatus, Metadata, Timestamped } from '../../shared/primitives';
-
-/** Type contracts only; runtime validation belongs in account.schema.ts. */
-export type AccountId = Brand<string, 'AccountId'>;
-export type AccountStatus = EntityStatus;
-export type Account = Readonly<{ id: AccountId; status: AccountStatus; metadata: Metadata } & Timestamped>;
-export type CreateAccountInput = Readonly<{ id?: AccountId; metadata?: Metadata }>;
-export type UpdateAccountInput = Readonly<{ metadata?: Metadata }>;
+import type { Brand, Metadata, Timestamped } from "../../shared/primitives";
+export type AccountId = Brand<string, "AccountId">;
+export type AccountStatus =
+  | "pending"
+  | "active"
+  | "suspended"
+  | "locked"
+  | "deactivated";
+export type AccountIdentity = Readonly<{
+  provider: string;
+  providerSubject: string;
+}>;
+export type Account = Readonly<
+  {
+    id: AccountId;
+    identity: AccountIdentity;
+    status: AccountStatus;
+    metadata: Metadata;
+  } & Timestamped
+>;
+export type AccountCreateInput = Readonly<{
+  id?: AccountId;
+  identity: AccountIdentity;
+  metadata?: Metadata;
+}>;
+export type AccountUpdateInput = Readonly<{ metadata?: Metadata }>;
+export type AccountSummary = Readonly<
+  Pick<Account, "id" | "status" | "createdAt">
+>;

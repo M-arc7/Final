@@ -1,5 +1,12 @@
-import type { Repository } from '../../shared/repository';
-import type { PermissionCheck, PermissionCheckId } from './permission-check.types';
-
-/** Persistence port only. Database queries and adapter details live outside core. */
-export interface PermissionCheckRepository extends Repository<PermissionCheckId, PermissionCheck> {}
+import type { PermissionCheck } from "./permission-check.types";
+export interface PermissionCheckRepository {
+  isActiveOrganisationMember(
+    accountId: string,
+    organisationId: string,
+  ): Promise<boolean>;
+  resolvePermissionCodes(
+    accountId: string,
+    organisationId: string | undefined,
+    resource: PermissionCheck["resource"],
+  ): Promise<readonly string[]>;
+}
