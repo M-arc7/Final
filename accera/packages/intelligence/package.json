@@ -1,0 +1,21 @@
+{
+  "name": "@accera/intelligence",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@accera/analytics": "workspace:*",
+    "@accera/core": "workspace:*",
+    "@accera/database": "workspace:*",
+    "@accera/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

@@ -28,6 +28,10 @@ The documented architecture is the implementation contract. Start at
 [`docs/README.md`](docs/README.md), then consult the relevant domain and ADR before
 introducing a new entity, policy, service boundary or integration.
 
+Package ownership and permitted workspace dependencies are defined in
+[`docs/01-architecture/package-architecture.md`](docs/01-architecture/package-architecture.md).
+Run `pnpm architecture:check` after adding a package or an `@accera/*` dependency.
+
 ## Prerequisites
 
 - Node.js 22.11 or later

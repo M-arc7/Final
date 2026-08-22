@@ -15,3 +15,6 @@ This directory is the controlled implementation contract for ACCERA. Read the re
 | `08-decisions` | Durable architecture decisions and their rationale |
 
 Documentation is versioned with code. Do not copy authoritative details into a neighboring page: link to its owner instead.
+
+The package-level dependency and ownership policy is
+[`01-architecture/package-architecture.md`](01-architecture/package-architecture.md).

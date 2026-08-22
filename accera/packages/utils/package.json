@@ -1,0 +1,19 @@
+{
+  "name": "@accera/utils",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "date-fns": "^4.4.0",
+    "zod": "^3.24.1"
+  }
+}

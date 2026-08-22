@@ -1,0 +1,21 @@
+{
+  "name": "@accera/finance",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@accera/core": "workspace:*",
+    "@accera/database": "workspace:*",
+    "@accera/payments": "workspace:*",
+    "@accera/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
