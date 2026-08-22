@@ -1,0 +1,1 @@
+export function log(level: 'info' | 'warn' | 'error', event: string, fields: Record<string, unknown> = {}) { console[level](JSON.stringify({ level, event, timestamp: new Date().toISOString(), ...fields })); }

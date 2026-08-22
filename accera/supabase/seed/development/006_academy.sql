@@ -1,0 +1,1 @@
+-- Create academy fixtures only after sport, organisation, facility and athlete dependencies exist.

@@ -1,0 +1,1 @@
+-- Development organisations are created by integration fixtures after Auth users exist; preserve the organisation -> owner membership invariant.

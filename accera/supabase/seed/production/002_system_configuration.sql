@@ -1,0 +1,1 @@
+-- Production bootstrap is deliberately limited to approved reference data. System secrets and users are provisioned outside SQL seeds.

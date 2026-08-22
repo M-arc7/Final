@@ -1,0 +1,1 @@
+-- Create facilities through fixtures after organisations are created; no fixture may bypass RLS or booking constraints.

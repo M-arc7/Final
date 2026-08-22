@@ -1,0 +1,3 @@
+insert into public.organisation_types (code, name) values ('club', 'Club'), ('academy', 'Academy'), ('facility', 'Facility'), ('federation', 'Federation'), ('business', 'Business') on conflict (code) do nothing;
+insert into public.roles (code, name, is_system) values ('platform_admin', 'Platform administrator', true), ('player', 'Player', true), ('coach', 'Coach', true), ('official', 'Official', true) on conflict (code) do nothing;
+insert into public.permissions (code, description) values ('organisation.manage', 'Manage organisation configuration'), ('facility.manage', 'Manage facilities and availability'), ('competition.manage', 'Manage competitions'), ('finance.manage', 'Manage finance'), ('academy.manage', 'Manage academy operations') on conflict (code) do nothing;

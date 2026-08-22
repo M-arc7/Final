@@ -1,0 +1,1 @@
+insert into public.organisation_types (code, name) values ('club', 'Club'), ('academy', 'Academy'), ('facility', 'Facility'), ('federation', 'Federation'), ('business', 'Business') on conflict (code) do nothing;

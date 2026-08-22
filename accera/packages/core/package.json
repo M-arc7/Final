@@ -1,0 +1,28 @@
+{
+  "name": "@accera/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./identity": "./identity/index.ts",
+    "./organisations": "./organisations/index.ts",
+    "./users": "./users/index.ts",
+    "./profiles": "./profiles/index.ts",
+    "./roles": "./roles/index.ts",
+    "./permissions": "./permissions/index.ts",
+    "./memberships": "./memberships/index.ts",
+    "./notifications": "./notifications/index.ts",
+    "./messaging": "./messaging/index.ts",
+    "./files": "./files/index.ts",
+    "./search": "./search/index.ts",
+    "./audit": "./audit/index.ts",
+    "./settings": "./settings/index.ts"
+  },
+  "dependencies": {
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,38 @@
+-- Foreign-key and tenant/query-path indexes. Do not add indexes without an observed
+-- query, an EXPLAIN plan, and an owner for write/maintenance cost.
+create index profiles_status_idx on public.profiles (status) where deleted_at is null;
+create index notifications_recipient_status_idx on public.notifications (recipient_id, status, created_at desc);
+create index messages_thread_created_idx on public.messages (thread_id, created_at);
+create index audit_log_organisation_occurred_idx on public.audit_log (organisation_id, occurred_at desc);
+create index organisation_memberships_user_idx on public.organisation_memberships (user_id, status);
+create index organisation_memberships_organisation_idx on public.organisation_memberships (organisation_id, status);
+create index organisations_parent_idx on public.organisations (parent_organisation_id) where parent_organisation_id is not null;
+create index sport_disciplines_sport_idx on public.sport_disciplines (sport_id);
+create index sport_categories_sport_idx on public.sport_categories (sport_id);
+create index sport_matches_organisation_time_idx on public.sport_matches (organisation_id, scheduled_at desc);
+create index sport_statistics_athlete_time_idx on public.sport_statistics (athlete_id, measured_at desc);
+create index facilities_organisation_idx on public.facilities (organisation_id, status);
+create index facility_resources_facility_idx on public.facility_resources (facility_id, status);
+create index availability_resource_time_idx on public.resource_availability_rules (resource_id, starts_at, ends_at);
+create index bookings_resource_time_idx on public.bookings (resource_id, starts_at, ends_at) where status in ('pending', 'confirmed');
+create index bookings_customer_time_idx on public.bookings (customer_id, starts_at desc);
+create index academy_programs_organisation_idx on public.academy_programs (organisation_id, status);
+create index academy_sessions_class_time_idx on public.academy_sessions (class_id, starts_at);
+create index academy_enrollments_athlete_idx on public.academy_enrollments (athlete_id, status);
+create index competitions_organisation_status_idx on public.competitions (organisation_id, status, starts_at);
+create index competition_registrations_competition_status_idx on public.competition_registrations (competition_id, status);
+create index competition_matches_competition_time_idx on public.competition_matches (competition_id, scheduled_at);
+create index competition_ranking_entries_athlete_idx on public.competition_ranking_entries (athlete_id, calculated_at desc);
+create index financial_transactions_organisation_created_idx on public.financial_transactions (organisation_id, created_at desc);
+create index financial_transactions_status_idx on public.financial_transactions (status, created_at);
+create index invoices_organisation_status_idx on public.invoices (organisation_id, status, due_at);
+create index products_catalogue_idx on public.products (catalogue_id, status);
+create index orders_organisation_status_idx on public.orders (organisation_id, status, created_at desc);
+create index orders_customer_created_idx on public.orders (customer_id, created_at desc);
+create index sponsorship_campaigns_organisation_idx on public.sponsorship_campaigns (organisation_id, status);
+create index athlete_metrics_athlete_time_idx on public.athlete_metrics (athlete_id, measured_at desc);
+create index training_records_athlete_time_idx on public.training_records (athlete_id, occurred_at desc);
+create index content_posts_organisation_published_idx on public.content_posts (organisation_id, published_at desc) where status = 'published';
+create index articles_published_idx on public.articles (published_at desc) where status = 'published';
+create index analytics_events_organisation_time_idx on public.analytics_events (organisation_id, occurred_at desc);
+create index recommendations_recipient_expiry_idx on public.recommendations (recipient_id, expires_at);

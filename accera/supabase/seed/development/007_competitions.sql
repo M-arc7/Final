@@ -1,0 +1,1 @@
+-- Create competition fixtures only after categories, registrations and facility resources exist.

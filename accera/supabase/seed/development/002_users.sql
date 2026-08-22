@@ -1,0 +1,1 @@
+-- Create development identities through the Supabase Auth Admin API or test setup. Do not insert password hashes or tokens in seed SQL.
